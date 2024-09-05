@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI - Test FullStack App
 
 on:
   push:
@@ -9,54 +9,45 @@ on:
       - main
 
 jobs:
-  build-and-test-front:
-    name: Build and Test Frontend
+  install-and-test:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 'v20.13.1'
-
-      - name: Install dependencies
-        run: |
-          cd front
-          npm install
-
-      - name: Build Angular project
-        run: |
-          cd front
-          npm run build -- --prod
-
-      - name: Run tests
-        run: |
-          cd front
-          npm test
-
-  build-and-test-back:
-    name: Build and Test Backend
-    runs-on: ubuntu-latest
-    needs: build-and-test-front
+    strategy:
+      matrix:
+        node-version: [20.13.1]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # Étape 1: Vérification du code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      # Étape 2: Setup Node.js pour la version spécifiée
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 'v20.13.1'
+          node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: |
-          cd back
-          npm install
+      # Étape 3: Installation des dépendances du back-end
+      - name: Install backend dependencies
+        working-directory: ./back
+        run: npm install
 
-      - name: Run tests
-        run: |
-          cd back
-          npm test
+      # Étape 4: Lancement des tests du back-end
+      - name: Run backend tests
+        working-directory: ./back
+        run: npm test
+
+      # Étape 5: Installation des dépendances du front-end
+      - name: Install frontend dependencies
+        working-directory: ./front
+        run: npm install
+
+      # Étape 6: Lancement des tests du front-end
+      - name: Run frontend tests
+        working-directory: ./front
+        run: npm run test -- --watch=false
+
+      # Étape 7: Lint du front-end
+      - name: Run frontend lint
+        working-directory: ./front
+        run: npm run lint
