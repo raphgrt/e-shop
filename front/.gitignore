@@ -21,11 +21,11 @@ yarn-error.log
 *.sublime-workspace
 
 # Visual Studio Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+front/.vscode/*
+!front/.vscode/settings.json
+!front/.vscode/tasks.json
+!front/.vscode/launch.json
+!front/.vscode/extensions.json
 .history/*
 
 # Miscellaneous
@@ -36,6 +36,7 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+.vscode
 
 # System files
 .DS_Store
