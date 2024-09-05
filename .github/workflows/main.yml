@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test-front:
+    name: Build and Test Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          cd front
+          npm install
+
+      - name: Build Angular project
+        run: |
+          cd front
+          npm run build -- --prod
+
+      - name: Run tests
+        run: |
+          cd front
+          npm test
+
+  build-and-test-back:
+    name: Build and Test Backend
+    runs-on: ubuntu-latest
+    needs: build-and-test-front
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: |
+          cd back
+          npm install
+
+      - name: Run tests
+        run: |
+          cd back
+          npm test
